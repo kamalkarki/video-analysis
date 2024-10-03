@@ -14,7 +14,7 @@ from typing import Optional
 import fire
 from termcolor import cprint
 
-from models.llama3.reference_impl.generation import Llama
+#from models.llama3.reference_impl.generation import Llama
 from transformers import AutoModelForCausalLM, AutoTokenizer
 tokenizer_path = '/home/kamlesh/.llama/checkpoints/Llama3.2-3B-Instruct/tokenizer.model'
 ckpt_dir = "/home/kamlesh/.llama/checkpoints/Llama3.2-3B-Instruct"
