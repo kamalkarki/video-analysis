@@ -305,10 +305,10 @@ def summarize():
     ]
 
     response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-    print(response)
-    # print(type(response))
-    return response
-    # return response
+    
+    # make a json object with key "summary" and value as the response
+    response = {"summary": response}
+    return jsonify(response)
 
 @app.route('/describe_image', methods=['POST'])
 def describe_image():
