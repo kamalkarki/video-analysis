@@ -19,8 +19,11 @@ def process_video(video):
     # Get the frame rate of the video
     frame_rate = cap.get(cv2.CAP_PROP_FPS)
 
-    #extract_interval = int(frame_rate) # extract one frame per second
-    extract_interval = int(frame_rate) * 15
+    extract_interval = int(frame_rate) * 1 # extract one frame per second 
+    
+    # Please increase the extract_interval if you want to extract less frames for faster processing
+    # extract_interval = int(frame_rate) * 15
+    
     # # Create a timestamp for the file name
     # timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     
