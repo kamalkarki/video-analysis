@@ -1,5 +1,3 @@
-
-
 # Project Video Analysis 
 
 This project demonstrates an end-to-end pipeline for analyzing videos specially survillance videos using vision and text based Llms.

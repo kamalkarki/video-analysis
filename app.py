@@ -14,8 +14,9 @@ from typing import Optional
 import fire
 from termcolor import cprint
 
-#from models.llama3.reference_impl.generation import Llama
+# from models.llama3.reference_impl.generation import Llama
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 tokenizer_path = '/home/kamlesh/.llama/checkpoints/Llama3.2-3B-Instruct/tokenizer.model'
 ckpt_dir = "/home/kamlesh/.llama/checkpoints/Llama3.2-3B-Instruct"
 
@@ -41,6 +42,7 @@ processor = AutoProcessor.from_pretrained(model_dir)
 # Enable model evaluation mode
 model.eval()
 
+
 def process_image(image_url):
     messages = [
         {
@@ -64,12 +66,13 @@ def process_image(image_url):
     )
     return inputs.to("cuda")
 
+
 @app.route('/describe_video', methods=['POST'])
 def describe_video():
     start_time = time.time()
     video_name = request.json.get('video_name')
     if not video_name:
-        return jsonify({"error": "No video name provided"},400)
+        return jsonify({"error": "No video name provided"}, 400)
 
     video_path = os.path.join(config["config"]["video_folder"], video_name)
     messages = [
@@ -86,9 +89,9 @@ def describe_video():
             ],
         }
     ]
-    
+
     inputs = process_vision_info(messages)
-    
+
     # Preparation for inference
     text = processor.apply_chat_template(
         messages, tokenize=False, add_generation_prompt=True
@@ -106,7 +109,7 @@ def describe_video():
     # Inference: Generation of the output
     generated_ids = model.generate(**inputs, max_new_tokens=128)
     generated_ids_trimmed = [
-        out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+        out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
     ]
     output_text = processor.batch_decode(
         generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
@@ -119,6 +122,7 @@ def describe_video():
         "time_taken": time_taken
     })
 
+
 @app.route('/describe_image_directory', methods=['POST'])
 def describe_image_directory():
     image_directory = request.json.get('image_directory')
@@ -126,13 +130,13 @@ def describe_image_directory():
         return jsonify({"error": "No image directory provided"})
 
     image_directory = os.path.join(config["config"]["image_folder"], image_directory)
-    
+
     # read all the images from the directory
     images = []
     for file in os.listdir(image_directory):
         if file.endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff')):
             images.append(os.path.join(image_directory, file))
-    
+
     image_descriptions = []
     # Inference
     for image in images:
@@ -150,13 +154,14 @@ def describe_image_directory():
         "image_descriptions": image_descriptions
     })
 
+
 @app.route('/describe_image_base64', methods=['POST'])
 def describe_image_base64():
     start_time = time.time()
 
     data_type = request.json.get('type')
     image_base64 = request.json.get('image')
-    
+
     if not image_base64:
         return jsonify({"error": "No image base64 provided"})
 
@@ -171,21 +176,21 @@ def describe_image_base64():
     ]
 
     text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    
+
     image_inputs, video_inputs = process_vision_info(messages)
     inputs = processor(
-            text=[text],
-            images=image_inputs,
-            videos=video_inputs,
-            padding=True,
-            return_tensors="pt",
-        )
+        text=[text],
+        images=image_inputs,
+        videos=video_inputs,
+        padding=True,
+        return_tensors="pt",
+    )
     inputs = inputs.to("cuda")
     # Inference: Generation of the output
     generated_ids = model.generate(**inputs, max_new_tokens=128)
     generated_ids_trimmed = [
-                        out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-                    ]
+        out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+    ]
     output_text = processor.batch_decode(
         generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
     )
@@ -202,21 +207,21 @@ def describe_image_base64():
 
 @app.route('/summarize_llama', methods=['POST'])
 def summarization():
-    context = request.json.get('data')    
+    context = request.json.get('data')
     from models.llama3.reference_impl.generation import Llama
     tokenizer_path = '/home/kamlesh/.llama/checkpoints/Llama3.2-3B-Instruct/tokenizer.model'
     ckpt_dir = "/home/kamlesh/.llama/checkpoints/Llama3.2-3B-Instruct"
 
     def run_main(
-        ckpt_dir: str =ckpt_dir,
-        temperature: float = 0.3,
-        top_p: float = 0.9,
-        max_seq_len: int = 1654 ,
-        max_batch_size: int = 4,
-        max_gen_len: int = 412,
-        model_parallel_size: Optional[int] = None,
-        ):
-        # print(ckpt_dir)    
+            ckpt_dir: str = ckpt_dir,
+            temperature: float = 0.3,
+            top_p: float = 0.9,
+            max_seq_len: int = 1654,
+            max_batch_size: int = 4,
+            max_gen_len: int = 412,
+            model_parallel_size: Optional[int] = None,
+    ):
+        # print(ckpt_dir)
         # tokenizer_path = str(tokenizer_path)
         generator = Llama.build(
             ckpt_dir=ckpt_dir,
@@ -237,7 +242,6 @@ def summarization():
             context: {context}
             """
 
-       
         result = generator.text_completion(
             prompt,
             temperature=temperature,
@@ -249,15 +253,14 @@ def summarization():
         result.generation
         data.append(json.dumps(response.json(), indent=2))
         return data
-    
-    return fire.Fire(run_main)
 
+    return fire.Fire(run_main)
 
 
 @app.route('/summarize_qwen', methods=['POST'])
 def summarize():
-    context = request.json.get('text')  
-    print("context",context)  
+    context = request.json.get('text')
+    print("context", context)
     model_name = "Qwen/Qwen2.5-3B-Instruct"
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
@@ -266,7 +269,7 @@ def summarize():
     )
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     question = 'Give a summary of all the frames also analyze what happened in the video?'
-    # now the llm calls   
+    # now the llm calls
     prompt_1 = f"""    
             You will be provided a question and context, please do the following steps.
             Understand the Question: Carefully read and comprehend the query before proceeding to the next step.
@@ -284,9 +287,9 @@ def summarize():
             """
     messages = [
         {"role": "system",
-        "content": "You are a research assistant helping a user find an informative & summarized answer from context"},
+         "content": "You are a research assistant helping a user find an informative & summarized answer from context"},
         {"role": "user",
-        "content": prompt_2},
+         "content": prompt_2},
 
     ]
     text = tokenizer.apply_chat_template(
@@ -305,10 +308,11 @@ def summarize():
     ]
 
     response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-    
+
     # make a json object with key "summary" and value as the response
     response = {"summary": response}
     return jsonify(response)
+
 
 @app.route('/describe_image', methods=['POST'])
 def describe_image():
@@ -342,5 +346,6 @@ def describe_image():
         "time_taken": time_taken
     })
 
+
 if __name__ == '__main__':
-    app.run(debug=False, threaded=False,port=6000)
+    app.run(debug=False, threaded=False, port=6000)

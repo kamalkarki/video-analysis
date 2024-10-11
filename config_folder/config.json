@@ -1,0 +1,35 @@
+{
+    "config": {
+        "os": "linux",
+        "port": 6000,
+        "env_var": {
+            "HUGGINGFACE_HUB_CACHE": "/mnt/d/.cache/huggingface/hub",
+            "TRANSFORMERS_CACHE": "/mnt/d/.cache/huggingface/hub",
+            "HF_HOME": "/mnt/d/.cache/huggingface",
+            "model_id_1": "qwen/Qwen2-VL-2B-Instruct-GPTQ-Int8",
+            "model_id_2": "microsoft/Phi-3.5-vision-instruct",
+            "HF_DATASETS_OFFLINE": 1,
+            "HF_HUB_OFFLINE": 1
+        },
+        "video_folder": "/mnt/d/research_v2/project/analysis/data/input/video/",
+        "image_folder": "/mnt/d/research_v2/project/analysis/data/output/video_frames/"
+    },
+    "vision_model": {
+        "qwen2": {
+            "model_name": "qwen/Qwen2-VL-2B-Instruct-GPTQ-Int8",
+            "model_source":"model_scope"
+            }
+        },
+    "text_model":{
+        "qwen2":{
+            "model_name": "Qwen/Qwen2.5-3B-Instruct",
+            "model_source":"model_scope"
+        },
+        "llama":{
+            "model_name": "",
+            "model_source":"hf",
+            "path":"D:\\research_v2\\project\\analysis\\models\\text\\meta-llamaLlama-3.2-3B-Instruct"
+        }
+    }
+}
+

@@ -1,3 +1,0 @@
-r_dict = json.load{'description': 'The image depicts a traffic intersection with multiple vehicles in motion. The scene includes a red pickup truck, a white sedan, a blue sedan, and a gold sedan. The traffic lights are green, indicating that vehicles can proceed. The intersection is marked with a pedestrian crossing, and there are traffic signs and street names visible. The timestamp at the top left corner of the image is 6:43 PM, and the image is labeled as "ABC ACTION NEWS."', 'image_url': 'test_base64', 'time_taken': 26.223763465881348}
-
-print(r_dict)

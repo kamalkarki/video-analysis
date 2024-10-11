@@ -1,0 +1,9 @@
+{
+    "config": {
+        "os": "linux",
+        "input_folder": "data/input/video",
+        "output_folder": "data/output/video_frames",
+        "timestamp_format": "%Y%m%d_%H%M%S",
+        "time_stamp":false
+    }
+}
